@@ -11,7 +11,7 @@ from src.core.config import settings
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 from src.db.tables.base import Base
-from src.db.tables.templates import *
+from src.db.tables import *
 
 target_metadata = Base.metadata
 

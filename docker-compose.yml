@@ -20,7 +20,7 @@ services:
       ]
     restart: unless-stopped
     volumes:
-      - .:/mrm
+      - .:/reportmaker
     ports:
       - "8000:8000"
     depends_on:
@@ -30,7 +30,7 @@ services:
   db:
     image: bitnami/postgresql:15
     restart: unless-stopped
-    container_name: reportmaker.db
+    container_name: reportmaker_db
     env_file:
       - .env
     volumes:
@@ -43,16 +43,15 @@ services:
       timeout: 2s
       retries: 10
 
-  api_migrations:
-    container_name: reportmaker.migrations
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: reportmaker-backend
-    command: "alembic upgrade head"
-    depends_on:
-      db:
-        condition: service_healthy
 
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
 volumes:
   postgres-data:
