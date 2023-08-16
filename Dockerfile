@@ -25,7 +25,7 @@ FROM python-base as deps
 
 # For MacOS
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends libpq-dev gcc libc6-dev && \
+    apt-get install -y --no-install-recommends wkhtmltopdf libpq-dev gcc libc6-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # Installing project dependencies

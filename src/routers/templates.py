@@ -1,24 +1,25 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Path
 
-from src.schemas.template import TemplateBase, TemplateCreate, TemplateOut
+from src.schemas.template import TemplateIn, TemplateOut
 from src.services.templates import TemplateService
 
 template_router = APIRouter(prefix="/templates", tags=["Templates"])
 
-@template_router.post("", response_model=TemplateOut)
-async def add_template(
-        template: TemplateCreate,
-        service: TemplateService = Depends(),
-        ):
-    return await service.base_create(template.dict())
-
-@template_router.get("")
+@template_router.get("", response_model=list[TemplateOut])
 async def get_templates(service: TemplateService = Depends()):
-    return await service.base_fetch_all()
+    return await service.get_templates()
 
 @template_router.get("/{template_id}", response_model=TemplateOut)
 async def get_template(
-        template_id: int,
+        template_id: int = Path(gt=0),
         service: TemplateService = Depends()
 ):
-    return await service.base_fetch_one(template_id)
+    return await service.get_template_by_id(template_id)
+
+@template_router.post("", response_model=TemplateOut)
+async def create_template(
+        template: TemplateIn,
+        service: TemplateService = Depends(),
+        ):
+    return await service.create_template(template)
+

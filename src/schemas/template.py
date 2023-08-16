@@ -1,5 +1,5 @@
 from src.schemas.base import ApiModel
-from fastapi import Path
+
 
 class TemplateId(ApiModel):
     id: int | None
@@ -8,7 +8,7 @@ class TemplateBase(ApiModel):
     operator_id: int |  None = None
     html: str | None
 
-class TemplateCreate(TemplateBase):
+class TemplateIn(TemplateBase):
     pass
 
 class TemplateOut(TemplateId, TemplateBase):

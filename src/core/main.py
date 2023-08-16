@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from src.core.config import settings
-from src.routers.templates import template_router
+from src.routers import template_router, report_router
 
 description = """
 
@@ -19,5 +19,6 @@ app = FastAPI(
 # -----------------------------Роуты-------------------------------------------
 
 
-for r in (template_router, ):
+for r in (template_router,
+          report_router):
     app.include_router(r, prefix="/api/v1"),
