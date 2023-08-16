@@ -1,11 +1,13 @@
 from fastapi import FastAPI
 
 from src.core.config import settings
-from src.routers import template_router, report_router
+from src.routers.patients import patient_router
+from src.routers.reports import report_router
+from src.routers.templates import template_router
 
 description = """
 
-### Проект 
+###  Сервис для генерации pdf отчетов по html-шаблонам
 
 """
 
@@ -19,6 +21,5 @@ app = FastAPI(
 # -----------------------------Роуты-------------------------------------------
 
 
-for r in (template_router,
-          report_router):
+for r in (report_router, template_router, patient_router):
     app.include_router(r, prefix="/api/v1"),

@@ -16,3 +16,6 @@ class PatientService(BaseService[PatientRepository, Patient]):
 
     async def get_patient_by_id(self, patient_id: int):
         return await self.base_fetch_one(patient_id)
+
+    async def delete_patient(self, patient_id: int):
+        pass
