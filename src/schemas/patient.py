@@ -1,17 +1,29 @@
+from datetime import date
+
+from pydantic import Field
+
 from src.schemas.base import ApiModel
 
+from strenum import StrEnum
+
+class Gender(StrEnum):
+    female = 'жен'
+    male = 'муж'
 
 class PatientId(ApiModel):
-    id: int | None
+    id: int
 class PatientBase(ApiModel):
-    first_name: str | None
-    middle_name: str |  None
-    last_name: str | None
-    passport_number: str | None
+    last_name: str
+    first_name: str
+    middle_name: str
+    birthday: date
+    passport_number: str
+    gender: Gender
+    snils: str
 
 
 class PatientIn(PatientBase):
     pass
 
-class PatientOut(PatientId, PatientBase):
+class PatientOut(PatientBase, PatientId):
     pass
