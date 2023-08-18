@@ -1,9 +1,4 @@
-from datetime import date
-
-from pydantic import Field
-
-from src.schemas.base import ApiModel
-from src.schemas.patient import Gender
+from src.schemas.patient import PatientId, PatientBase
 from strenum import StrEnum
 
 class RelationshipType(StrEnum):
@@ -14,16 +9,11 @@ class RelationshipType(StrEnum):
     guardian = 'опекун'
 
 
-class RelativeId(ApiModel):
-    id: int
-class RelativeBase(ApiModel):
-    last_name: str
-    first_name: str
+class RelativeId(PatientId):
+    pass
+
+class RelativeBase(PatientBase):
     middle_name: str | None = None
-    birthday: date
-    passport_number: str
-    gender: Gender
-    snils: str
     relationship_type: RelationshipType
 
 

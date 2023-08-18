@@ -19,3 +19,4 @@ class PatientService(BaseService[PatientRepository, Patient]):
 
     async def delete_patient(self, patient_id: int):
         pass
+

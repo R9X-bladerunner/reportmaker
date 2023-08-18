@@ -18,6 +18,7 @@ class BaseService(Generic[TRepository, TModel]):
     def __init__(self, sess: AsyncSession = Depends(get_session)) -> None:
         self.sess = sess
         self.repo = self.repo_type(self.sess)
+        self.check = 'check'
 
     async def base_fetch_all(
         self, pagination: Pagination | None = None
@@ -37,3 +38,5 @@ class BaseService(Generic[TRepository, TModel]):
 
     async def base_fetch_one(self, id_: int | PId | MdId) -> TModel | None:
         return await self.repo.get_(id_)
+
+
