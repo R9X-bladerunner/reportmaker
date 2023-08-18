@@ -3,13 +3,8 @@ from datetime import date
 from pydantic import Field
 
 from src.schemas.base import ApiModel
-
+from src.schemas.patient import Gender
 from strenum import StrEnum
-
-class Gender(StrEnum):
-    female = 'жен'
-    male = 'муж'
-
 
 class RelationshipType(StrEnum):
     father = 'отец'

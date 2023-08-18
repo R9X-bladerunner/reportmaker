@@ -8,14 +8,13 @@ from strenum import StrEnum
 
 class DocType(StrEnum):
     passport = 'passport'
-    birth_certificate_new  = 'birth_certificate_new'
-    birth_certificate_old = 'birth_certificate_old'
+    birth_cert_new  = 'birth_cert'
+    birth_cert_old = 'birth_cert_old'
 
 class DocumentId(ApiModel):
     id: int
+
 class DocumentBase(ApiModel):
-
-
     series: str
     number: str
     document_type: DocType
