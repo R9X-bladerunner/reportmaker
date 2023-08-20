@@ -1,4 +1,4 @@
-from src.db.tables.templates import Template
+from src.db.models.templates import Template
 from src.repositories.base import Repository
 
 

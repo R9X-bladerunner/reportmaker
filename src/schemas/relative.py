@@ -1,4 +1,5 @@
-from src.schemas.patient import PatientId, PatientBase
+from src.schemas.base import IdModel
+from src.schemas.patient import PatientId, PatientBase, PatientUpdate
 from strenum import StrEnum
 
 class RelationshipType(StrEnum):
@@ -9,16 +10,19 @@ class RelationshipType(StrEnum):
     guardian = 'опекун'
 
 
-class RelativeId(PatientId):
+class RelativeId(IdModel):
     pass
 
 class RelativeBase(PatientBase):
-    middle_name: str | None = None
-    relationship_type: RelationshipType
+    middle_name: str | None = None  # overload middle_name from patient model for make this attribute as not required
+
 
 
 class RelativeIn(RelativeBase):
     pass
 
 class RelativeOut(RelativeBase, RelativeId):
+    relationship_type: RelationshipType
+
+class RelativeUpdate(PatientUpdate):
     pass

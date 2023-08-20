@@ -1,26 +1,36 @@
-from fastapi import APIRouter, Depends, Path
+from typing import Union
 
-from src.schemas.patient import PatientIn, PatientOut
-from src.services.patients import PatientService
+from fastapi import APIRouter, Depends
+
+from src.schemas.patient import PatientIn, PatientOut, PatientUpdate
+from src.serv.services import PatientService
 
 patient_router = APIRouter(prefix="/patients", tags=["Patients"])
 
-@patient_router.get("", response_model=list[PatientOut])
-async def get_patients(service: PatientService = Depends()):
-    return await service.get_patients()
 
-@patient_router.get("/{patient_id}", response_model=PatientOut)
-async def get_patient(
-        patient_id: int = Path(gt=0),
-        service: PatientService = Depends()
-):
-    return await service.get_patient_by_id(patient_id)
+@patient_router.get("", response_model=list[PatientOut])
+def get_patients(service: PatientService = Depends()):
+    return service.get_patients()
+
+@patient_router.get("/{patient_id}", response_model=Union[PatientOut, None])
+def get_patient(patient_id: int, service: PatientService = Depends()):
+    return service.get_patient_by_id(patient_id)
 
 @patient_router.post("", response_model=PatientOut)
-async def create_patient(
+def create_patient(
         patient: PatientIn,
         service: PatientService = Depends(),
         ):
-    return await service.create_patient(patient)
+    return service.create_patient(patient)
 
+@patient_router.patch("", response_model=Union[PatientOut, None])
+def update_patient(
+        patient_id: int,
+        data: PatientUpdate,
+        service: PatientService = Depends()
+):
+    return service.update_patient_by_id(patient_id, data)
 
+@patient_router.delete("/{patient_id}")
+def delete_patient(patient_id: int, service: PatientService =Depends()):
+    return service.delete_patient(patient_id)

@@ -1,8 +1,9 @@
-from src.schemas.base import ApiModel
+from src.schemas.base import ApiModel, IdModel
 
 
-class TemplateId(ApiModel):
-    id: int | None
+class TemplateId(IdModel):
+    pass
+
 class TemplateBase(ApiModel):
     title: str | None = None
     operator_id: int |  None = None

@@ -2,7 +2,7 @@ from datetime import date
 
 from pydantic import Field
 
-from src.schemas.base import ApiModel
+from src.schemas.base import ApiModel, IdModel
 
 from strenum import StrEnum
 
@@ -11,8 +11,9 @@ class DocType(StrEnum):
     birth_cert_new  = 'birth_cert'
     birth_cert_old = 'birth_cert_old'
 
-class DocumentId(ApiModel):
-    id: int
+class DocumentId(IdModel):
+    pass
+
 
 class DocumentBase(ApiModel):
     series: str

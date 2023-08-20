@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     @validator("db_url", pre=True)
     def assemble_db_url(cls, v, values):
         return PostgresDsn.build(
-            scheme="postgresql+asyncpg",
+            scheme="postgresql+psycopg2",
             host=values.get("db_host"),
             port=values.get("db_port"),
             user=values.get("db_user"),
