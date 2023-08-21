@@ -1,37 +1,95 @@
-from ..db.models.tables import Patient
+from sqlalchemy import select, and_
+
+from src.dal.dal import Dal
+from ..db.models.tables import Patient, Relative, relationships
 from ..schemas.patient import PatientIn, PatientUpdate
 from ..schemas.relative import RelativeIn
-from ..utils.errors import RecordAlreadyExistError
-from sqlalchemy import delete, insert, select, update, and_
+from ..utils.errors import ItemNotFoundError
 
-from collections.abc import Mapping
-from  src.dal.dal import Dal
 
 class PatientDal(Dal[Patient]):
     model = Patient
 
     def get_patients(self) -> list[Patient] | None:
-        filters = select(self.model).where(self.model.is_patient == True)
-
+        filters = select(self.model)
         return self.fetch_all(filters)
 
+
     def get_patient_by_id(self, patient_id: int) -> Patient | None:
-        filters = and_(self.model.id == patient_id, self.model.is_patient == True)
-        stmt = select(self.model).filter(filters)
-        return self.fetch_first(stmt)
+        patient = self.get_(patient_id)
+        if patient is None:
+            raise ItemNotFoundError
+
+        return patient
 
 
     def create(self, schema: PatientIn) -> Patient:
-        patient = Patient(**schema.dict(), is_patient=True)
+        patient = Patient(**schema.dict())
         return self.add_orm(patient)
 
     #
-    def update_by_id(self, patient_id: int, data: PatientUpdate) -> Patient | None:
-        filters = {'id': patient_id, "is_patient": True}
+    def update_by_id(self, patient_id: int, data: PatientUpdate) -> Patient:
+        filters = {'id': patient_id}
         patch = data.dict(exclude_unset=True)
+        updated_patient = self.update(filters, patch)
+        if updated_patient is None:
+            raise ItemNotFoundError   #   Посмотреть что должно возвращаться по соглашению
         return self.update(filters, patch)
 
-    delete
+
+    def delete_by_id(self, patient_id: int) -> None:
+        patient = self.get_(patient_id)
+        if patient is None:
+            raise ItemNotFoundError
+
+        self.delete_orm(patient)
+
+        for relative in patient.relatives:
+            if len(relative.patients) == 1:
+                self.delete_orm(relative)
+
+        return None
+
+    def create_relative(self, patient_id: int, relative_data: RelativeIn) -> Relative:
+        patient = self.get_patient_by_id(patient_id)
+        if patient is None:
+            raise ItemNotFoundError
+
+        relative = Relative(**relative_data.dict(exclude={'relationship_type'}))
+        patient.relatives.append(relative)
+        self.sess.flush()
+        self.sess.execute(
+            relationships.update()
+            .values(relationship_type=relative_data.relationship_type)
+            .where(
+                and_(
+                    relationships.c.patient_id == patient_id,
+                    relationships.c.relative_id == relative.id
+                )
+            )
+        )
+
+        return relative
+
+
+
+
+
+
+
+    # def delete_patient_with_relatives(dal, patient_id):
+    #         patient = dal.get_(patient_id)
+    #
+    #         if patient is None:
+    #             return
+    #
+    #         # Удаление пациента
+    #         dal.delete_orm(patient)
+    #
+    #         # Удаление родственников пациента без связей с другими пациентами
+    #         for relative in patient.relatives:
+    #             if len(relative.patients) == 1:
+    #                 dal.delete_orm(relative)
 
     #
     # def get_all_or_limit (self, limit: int = None) -> list[Patient] | None:
@@ -92,7 +150,7 @@ class PatientDal(Dal[Patient]):
     #         stmt = stmt.join(Route.route_tag_link).where(
     #             RouteTagLink.route_tag_id.in_(tag_ids))
     #
-   
+
     #     stmt = stmt.offset(params.page_size * params.page)
     #
     #     return await self.fetch_all(stmt, limit=params.page_size)

@@ -1,8 +1,9 @@
 from typing import Union
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 
 from src.schemas.patient import PatientIn, PatientOut, PatientUpdate
+from src.schemas.relative import RelativeIn, RelativeOut, RelativeUpdate
 from src.serv.services import PatientService
 
 patient_router = APIRouter(prefix="/patients", tags=["Patients"])
@@ -32,5 +33,15 @@ def update_patient(
     return service.update_patient_by_id(patient_id, data)
 
 @patient_router.delete("/{patient_id}")
-def delete_patient(patient_id: int, service: PatientService =Depends()):
+def delete_patient(patient_id: int, service: PatientService=Depends()):
     return service.delete_patient(patient_id)
+
+@patient_router.post("/{patient_id}/relatives/", response_model=RelativeOut)
+def create_relative(patient_id:int,
+                    relative_data: RelativeIn,
+                    service: PatientService=Depends()):
+    return service.create_relative(patient_id, relative_data)
+
+@patient_router.get("/{patient_id}/relatives/", response_model=list[RelativeOut])
+def get_patient_relatives(patient_id: int):
+

@@ -1,11 +1,24 @@
+from sqlalchemy import select
+
+from src.dal.dal import Dal
 from src.db.models.tables import relationships
-from src.schemas.patient import PatientIn, PatientUpdate
 from src.schemas.relative import RelativeIn
-from src.utils.errors import RecordAlreadyExistError
-from sqlalchemy import delete, insert, select, update, and_
+from src.utils.errors import ItemNotFoundError
+from sqlalchemy import and_
 
-from collections.abc import Mapping
-from  src.dal.dal import Dal
 
-class RelationshipsDal(Dal[relationships]):
+class RelationshipDal(Dal[relationships]):
     model = relationships
+    def get_relation(self, patient_id: int, relative_id:int) -> relationships:
+        stmt = select(self.model).where(
+            and_(
+                self.model.c.patient_id == patient_id,
+               self.model.c.relative_id == relative_id
+            )
+        )
+        result = self.sess.execute(stmt)
+        relation = result.unique().fetchone()
+        print(f'пизда-  ------------------{relation}')
+        if relation is None:
+            raise ItemNotFoundError
+        return relation

@@ -28,8 +28,7 @@ class PatientIn(PatientBase):
     pass
 
 class PatientOut(PatientBase, PatientId):
-    is_patient: bool
-
+    pass
 
 class PatientUpdate(PatientBase):
     last_name: str | None = None

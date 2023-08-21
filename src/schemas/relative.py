@@ -15,14 +15,15 @@ class RelativeId(IdModel):
 
 class RelativeBase(PatientBase):
     middle_name: str | None = None  # overload middle_name from patient model for make this attribute as not required
-
+    relationship_type: RelationshipType
 
 
 class RelativeIn(RelativeBase):
     pass
 
 class RelativeOut(RelativeBase, RelativeId):
-    relationship_type: RelationshipType
+    relationship_type: RelationshipType | None = None
 
 class RelativeUpdate(PatientUpdate):
-    pass
+    relationship_type: RelationshipType | None = None
+
