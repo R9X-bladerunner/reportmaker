@@ -3,7 +3,7 @@ from typing import Union
 from fastapi import APIRouter, Depends, status
 
 from src.schemas.patient import PatientIn, PatientOut, PatientUpdate
-from src.schemas.relative import RelativeIn, RelativeOut, RelativeUpdate
+from src.schemas.relative import RelativeIn, RelativeOut, RelativeUpdate, RelativeBase
 from src.serv.services import PatientService
 
 patient_router = APIRouter(prefix="/patients", tags=["Patients"])
@@ -42,6 +42,9 @@ def create_relative(patient_id:int,
                     service: PatientService=Depends()):
     return service.create_relative(patient_id, relative_data)
 
-@patient_router.get("/{patient_id}/relatives/", response_model=list[RelativeOut])
-def get_patient_relatives(patient_id: int):
+@patient_router.get("/{patient_id}/relatives/", response_model=list[RelativeBase])
+def get_patient_relatives(patient_id: int,
+                          service: PatientService=Depends()):
+
+    return service.get_patient_relatives(patient_id)
 

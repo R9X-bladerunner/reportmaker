@@ -71,6 +71,13 @@ class PatientDal(Dal[Patient]):
 
         return relative
 
+    def get_relatives(self, patient_id: int) -> list[Relative]:
+
+        patient = self.get_patient_by_id(patient_id)
+        relatives = patient.relatives
+        return relatives
+
+
 
 
 

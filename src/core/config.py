@@ -1,6 +1,5 @@
 from functools import lru_cache
 
-import cryptocode
 from pydantic import BaseSettings, validator, PostgresDsn
 
 

@@ -9,6 +9,8 @@ from src.schemas.patient import PatientIn, PatientUpdate
 from src.schemas.relative import RelativeIn, RelativeOut
 
 
+
+
 class PatientService:
     def __init__(self, patient_dal: PatientDal = Depends(), relationship_dal: RelationshipDal = Depends()):
         self.dal = patient_dal
@@ -46,7 +48,7 @@ class PatientService:
         return relative_out
 
     def get_patient_relatives(self, patient_id: int):
-        pass
+        return self.dal.get_relatives(patient_id)
 
 
 
