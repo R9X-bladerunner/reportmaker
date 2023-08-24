@@ -2,13 +2,11 @@ from datetime import date
 
 from pydantic import Field
 
-from src.schemas.base import ApiModel, IdModel
+from src.schemas.base import ApiModel, IdModel, Gender
+from src.schemas.relative import RelationshipType
 
-from strenum import StrEnum
 
-class Gender(StrEnum):
-    male = 'male'
-    female = 'female'
+
 
 
 class PatientId(IdModel):
@@ -30,7 +28,10 @@ class PatientIn(PatientBase):
 class PatientOut(PatientBase, PatientId):
     pass
 
-class PatientUpdate(PatientBase):
+class PatientOutWithRelType(PatientOut):
+    relative_to_patient_as: RelationshipType
+
+class PatientUpdate(ApiModel):
     last_name: str | None = None
     first_name: str | None = None
     middle_name: str | None = None

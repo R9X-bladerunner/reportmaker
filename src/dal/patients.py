@@ -1,9 +1,11 @@
-from sqlalchemy import select, and_
+from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 
 from src.dal.dal import Dal
-from ..db.models.tables import Patient, Relative, relationships
+from ..db.models.tables import Patient, Relative, Relationship, Document
+from ..schemas.document import DocumentIn, DocumentOut
 from ..schemas.patient import PatientIn, PatientUpdate
-from ..schemas.relative import RelativeIn
+from ..schemas.relative import RelativeIn, RelativeOut
 from ..utils.errors import ItemNotFoundError
 
 
@@ -14,14 +16,12 @@ class PatientDal(Dal[Patient]):
         filters = select(self.model)
         return self.fetch_all(filters)
 
-
-    def get_patient_by_id(self, patient_id: int) -> Patient | None:
-        patient = self.get_(patient_id)
+    def get_patient_by_id(self, patient_id: int, options = None) -> Patient:
+        patient = self.get_(patient_id, options=options)
         if patient is None:
             raise ItemNotFoundError
 
         return patient
-
 
     def create(self, schema: PatientIn) -> Patient:
         patient = Patient(**schema.dict())
@@ -33,9 +33,8 @@ class PatientDal(Dal[Patient]):
         patch = data.dict(exclude_unset=True)
         updated_patient = self.update(filters, patch)
         if updated_patient is None:
-            raise ItemNotFoundError   #   Посмотреть что должно возвращаться по соглашению
+            raise ItemNotFoundError  # Посмотреть что должно возвращаться по соглашению
         return self.update(filters, patch)
-
 
     def delete_by_id(self, patient_id: int) -> None:
         patient = self.get_(patient_id)
@@ -50,36 +49,40 @@ class PatientDal(Dal[Patient]):
 
         return None
 
-    def create_relative(self, patient_id: int, relative_data: RelativeIn) -> Relative:
+    def create_relative(self, patient_id: int, relative_data: RelativeIn) -> (Relative, Relationship):
         patient = self.get_patient_by_id(patient_id)
-        if patient is None:
-            raise ItemNotFoundError
-
-        relative = Relative(**relative_data.dict(exclude={'relationship_type'}))
-        patient.relatives.append(relative)
+        relation = Relationship(**relative_data.dict(include={"relationship_type"}))
+        relative = Relative(**relative_data.dict(exclude={"relationship_type"}))
+        relation.relative = relative
+        patient.relative_association.append(relation)
         self.sess.flush()
-        self.sess.execute(
-            relationships.update()
-            .values(relationship_type=relative_data.relationship_type)
-            .where(
-                and_(
-                    relationships.c.patient_id == patient_id,
-                    relationships.c.relative_id == relative.id
-                )
-            )
-        )
+        self.sess.refresh(relative)
+        self.sess.refresh(relation)
+        return relative, relation
 
-        return relative
+    def get_patient_w_relationship_a_relative(self, patient_id: int) -> Patient:
+        patient = self.get_patient_by_id(patient_id, options=[
+            joinedload(Patient.relative_association).joinedload(Relationship.relation_relative)])
 
-    def get_relatives(self, patient_id: int) -> list[Relative]:
+        # stmt = select(Patient).filter_by(id=patient_id).options(
+        #     joinedload(Patient.relative_association).joinedload(Relationship.relationrelative))
+        #
+        # patient = self.fetch_one(stmt)
+        return patient
 
+
+    def create_document(self, patient_id: int, document_data: DocumentIn) -> Document:
         patient = self.get_patient_by_id(patient_id)
-        relatives = patient.relatives
-        return relatives
+        document = Document(**document_data.dict())
+        patient.documents.append(document)
+        self.sess.flush()
+        self.sess.refresh(document)
+        return document
 
-
-
-
+    def get_patient_documents(self, patient_id: int) -> list[Document]:
+        patient = self.get_patient_by_id(patient_id, options=[joinedload(Patient.documents)])
+        print(patient.documents)
+        return patient.documents
 
 
 

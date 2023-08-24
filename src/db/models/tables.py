@@ -9,13 +9,27 @@ from src.schemas.patient import Gender
 from src.schemas.relative import RelationshipType
 
 
-relationships = Table(
-    "relationships",
-    Base.metadata,
-    Column("patient_id", Integer, ForeignKey("patients.id", ondelete="CASCADE"), primary_key=True),
-    Column("relative_id", Integer, ForeignKey("relatives.id", ondelete="CASCADE"), primary_key=True),
-    Column("relationship_type", Enum(RelationshipType))
-)
+# relationships = Table(
+#     "relationships",
+#     Base.metadata,
+#     Column("patient_id", Integer, ForeignKey("patients.id", ondelete="CASCADE"), primary_key=True),
+#     Column("relative_id", Integer, ForeignKey("relatives.id", ondelete="CASCADE"), primary_key=True),
+#     Column("relationship_type", Enum(RelationshipType))
+# )
+
+class Relationship(Base):
+    __tablename__ = 'relationships'
+
+    patient_id = Column(Integer, ForeignKey("patients.id", ondelete="CASCADE"), primary_key=True)
+    relative_id = Column(Integer, ForeignKey("relatives.id", ondelete="CASCADE"), primary_key=True)
+    relationship_type = Column(Enum(RelationshipType))
+
+    relative = relationship("Relative", uselist=False)
+    patient = relationship("Patient", uselist=False)
+
+
+
+
 
 class Patient(Base):
     __tablename__ = "patients"
@@ -30,11 +44,13 @@ class Patient(Base):
 
     relatives = relationship(
         "Relative",
-        secondary=relationships,
+        secondary='relationships',
         backref="patients"
     )
+    relative_association = relationship("Relationship", backref='relation_patient')
 
     documents = relationship("Document", backref="patient")
+
 
 class Relative(Base):
     __tablename__ = "relatives"
@@ -46,6 +62,8 @@ class Relative(Base):
     birthday = Column(Date, nullable=False)
     gender = Column(Enum(Gender))
     snils = Column(String(11))
+
+    relative_association = relationship("Relationship", backref='relation_relative')
 
     documents = relationship("Document", backref="relative")
 
