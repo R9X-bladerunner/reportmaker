@@ -101,7 +101,7 @@ class Dal(Generic[_T]):
         # yapf: enable
         stmt = _rows_to_orm(row_stmt, self.model)
         result = self.sess.scalar(stmt)
-        return self.sess.scalar(stmt)
+        return result
 
     # Delete
     def delete_orm(self, obj) -> None:

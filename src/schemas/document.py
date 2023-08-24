@@ -1,10 +1,9 @@
 from datetime import date
 
-from pydantic import Field
+from strenum import StrEnum
 
 from src.schemas.base import ApiModel, IdModel
 
-from strenum import StrEnum
 
 class DocType(StrEnum):
     passport = 'passport'
@@ -28,3 +27,10 @@ class DocumentIn(DocumentBase):
 
 class DocumentOut(DocumentBase, DocumentId):
     pass
+
+class DocumentUpdate(ApiModel):
+    series: str | None = None
+    number: str | None = None
+    document_type: DocType | None = None
+    issue_date: date | None = None
+    issuing_authority: str | None = None

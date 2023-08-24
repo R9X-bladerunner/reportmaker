@@ -1,6 +1,6 @@
 from typing import Union
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends
 
 from src.schemas.document import DocumentOut, DocumentIn
 from src.schemas.patient import PatientIn, PatientOut, PatientUpdate
@@ -50,7 +50,7 @@ def get_patient_relatives(patient_id: int,
     return service.get_patient_relatives(patient_id)
 
 @patient_router.post("/{patient_id}/documents", response_model=DocumentOut)
-def create_document(patient_id:int,
+def create_patient_document(patient_id:int,
                     document_data: DocumentIn,
                     service: PatientService=Depends()):
     return service.create_document(patient_id, document_data)
@@ -59,4 +59,5 @@ def get_patient_documents(patient_id: int,
                           service: PatientService=Depends()):
 
     return service.get_patient_documents(patient_id)
+
 

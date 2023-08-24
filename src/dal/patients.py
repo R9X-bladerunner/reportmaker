@@ -2,11 +2,11 @@ from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
 from src.dal.dal import Dal
-from ..db.models.tables import Patient, Relative, Relationship, Document
-from ..schemas.document import DocumentIn, DocumentOut
-from ..schemas.patient import PatientIn, PatientUpdate
-from ..schemas.relative import RelativeIn, RelativeOut
-from ..utils.errors import ItemNotFoundError
+from src.db.models.tables import Patient, Relative, Relationship, Document
+from src.schemas.document import DocumentIn
+from src.schemas.patient import PatientIn, PatientUpdate
+from src.schemas.relative import RelativeIn
+from src.utils.errors import ItemNotFoundError
 
 
 class PatientDal(Dal[Patient]):
@@ -28,7 +28,7 @@ class PatientDal(Dal[Patient]):
         return self.add_orm(patient)
 
     #
-    def update_by_id(self, patient_id: int, data: PatientUpdate) -> Patient:
+    def update_patient_by_id(self, patient_id: int, data: PatientUpdate) -> Patient:
         filters = {'id': patient_id}
         patch = data.dict(exclude_unset=True)
         updated_patient = self.update(filters, patch)
@@ -37,15 +37,24 @@ class PatientDal(Dal[Patient]):
         return self.update(filters, patch)
 
     def delete_by_id(self, patient_id: int) -> None:
-        patient = self.get_(patient_id)
-        if patient is None:
-            raise ItemNotFoundError
-
-        self.delete_orm(patient)
-
+        patient = self.get_patient_by_id(patient_id, options=[
+            joinedload(Patient.relatives)
+        ])
         for relative in patient.relatives:
             if len(relative.patients) == 1:
-                self.delete_orm(relative)
+                 self.delete_orm(relative)
+        self.sess.flush()
+        self.delete_orm(patient)
+
+
+        # if patient is None:
+        #     raise ItemNotFoundError
+        #
+        # self.delete_orm(patient)
+        #
+        # for relative in patient.relatives:
+        #     if len(relative.patients) == 1:
+        #         self.delete_orm(relative)
 
         return None
 
@@ -62,12 +71,8 @@ class PatientDal(Dal[Patient]):
 
     def get_patient_w_relationship_a_relative(self, patient_id: int) -> Patient:
         patient = self.get_patient_by_id(patient_id, options=[
-            joinedload(Patient.relative_association).joinedload(Relationship.relation_relative)])
+            joinedload(Patient.relative_association).joinedload(Relationship.relative)])
 
-        # stmt = select(Patient).filter_by(id=patient_id).options(
-        #     joinedload(Patient.relative_association).joinedload(Relationship.relationrelative))
-        #
-        # patient = self.fetch_one(stmt)
         return patient
 
 

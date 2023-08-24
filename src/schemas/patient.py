@@ -1,12 +1,7 @@
 from datetime import date
 
-from pydantic import Field
-
 from src.schemas.base import ApiModel, IdModel, Gender
 from src.schemas.relative import RelationshipType
-
-
-
 
 
 class PatientId(IdModel):

@@ -1,8 +1,8 @@
 from datetime import datetime
 from typing import NamedTuple
 from fastapi import Query
-from sqlalchemy import Column, Integer
 from sqlalchemy.orm import DeclarativeBase
+
 
 class Pagination(NamedTuple):
     created_before: datetime | None = Query(

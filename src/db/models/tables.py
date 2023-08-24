@@ -1,6 +1,6 @@
 
 
-from sqlalchemy import Column, Integer, String, ForeignKey, Date, Enum, Table, Text, CheckConstraint
+from sqlalchemy import Column, Integer, String, ForeignKey, Date, Enum, Text, CheckConstraint
 from sqlalchemy.orm import relationship
 
 from src.db.models.base import Base
@@ -47,7 +47,7 @@ class Patient(Base):
         secondary='relationships',
         backref="patients"
     )
-    relative_association = relationship("Relationship", backref='relation_patient')
+    relative_association = relationship("Relationship")
 
     documents = relationship("Document", backref="patient")
 
@@ -63,7 +63,7 @@ class Relative(Base):
     gender = Column(Enum(Gender))
     snils = Column(String(11))
 
-    relative_association = relationship("Relationship", backref='relation_relative')
+    relative_association = relationship("Relationship")
 
     documents = relationship("Document", backref="relative")
 

@@ -2,7 +2,8 @@ from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
 from src.dal.dal import Dal
-from src.db.models.tables import Relative, Relationship
+from src.db.models.tables import Relative, Relationship, Document
+from src.schemas.document import DocumentIn
 from src.schemas.relative import RelativeUpdate
 from src.utils.errors import ItemNotFoundError
 
@@ -22,8 +23,21 @@ class RelativeDal(Dal[Relative]):
 
     def get_relative_w_relationship_a_patient(self, relative_id: int):
         relative = self.get_relative_by_id(relative_id, options=[
-            joinedload(Relative.relative_association).joinedload(Relationship.relation_patient)])
+            joinedload(Relative.relative_association).joinedload(Relationship.patient)])
 
         return relative
+
+    def create_document(self, relative_id: int, document_data: DocumentIn) -> Document:
+        relative = self.get_relative_by_id(relative_id)
+        document = Document(**document_data.dict())
+        relative.documents.append(document)
+        self.sess.flush()
+        self.sess.refresh(document)
+        return document
+
+    def get_relative_documents(self, patient_id: int) -> list[Document]:
+        relative = self.get_relative_by_id(patient_id, options=[joinedload(Relative.documents)])
+        print(relative.documents)
+        return relative.documents
 
 
