@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends
 from src.schemas.document import DocumentOut, DocumentIn
 from src.schemas.patient import PatientIn, PatientOut, PatientUpdate
 from src.schemas.relative import RelativeIn, RelativeOut
-from src.serv.services import PatientService
+from src.services.services import PatientService
 
 patient_router = APIRouter(prefix="/patients", tags=["Patients"])
 

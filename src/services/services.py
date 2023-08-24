@@ -3,7 +3,7 @@ import tempfile
 
 import jinja2
 import pdfkit
-from fastapi import Depends
+from fastapi import Depends, status
 from sqlalchemy.orm import joinedload
 
 from src.dal.documents import DocumentDal
@@ -86,6 +86,10 @@ class RelativeService:
     def get_relative_documents(self, relative_id: int) -> list[Document]:
         documents = self.dal.get_relative_documents(relative_id)
         return documents
+
+    def delete_relative_by_id(self, relative_id: int) -> status.HTTP_204_NO_CONTENT:
+        self.dal.delete_by_id(relative_id)
+        return None
 
 
 class DocumentService:

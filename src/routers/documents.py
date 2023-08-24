@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends
 from src.schemas.document import DocumentOut, DocumentUpdate
 from src.schemas.patient import PatientOut
 from src.schemas.relative import RelativeOut
-from src.serv.services import DocumentService
+from src.services.services import DocumentService
 
 document_router = APIRouter(prefix="/documents", tags=["Documents"])
 

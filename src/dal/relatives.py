@@ -40,4 +40,15 @@ class RelativeDal(Dal[Relative]):
         print(relative.documents)
         return relative.documents
 
+    def delete_by_id(self, relative_id: int) -> None:
+        relative = self.get_relative_by_id(relative_id, options = [
+            joinedload(Relative.relative_association),
+            joinedload(Relative.documents)
+        ])
+        for relation in relative.relative_association:
+            self.delete_orm(relation)
+        for documents in relative.documents:
+            self.delete_orm(documents)
+        self.delete_orm(relative)
+
 
