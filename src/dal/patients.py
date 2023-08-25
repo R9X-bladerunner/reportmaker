@@ -34,7 +34,7 @@ class PatientDal(Dal[Patient]):
         updated_patient = self.update(filters, patch)
         if updated_patient is None:
             raise ItemNotFoundError
-        return self.update(filters, patch)
+        return updated_patient
 
     def delete_by_id(self, patient_id: int) -> None:
         patient = self.get_patient_by_id(patient_id, options = [

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status
 
 from src.schemas.document import DocumentOut, DocumentIn
 from src.schemas.patient import PatientOutWithRelType
-from src.schemas.relative import RelativeOut
+from src.schemas.relative import RelativeOut, RelativeUpdate
 from src.services.services import RelativeService
 
 relative_router = APIRouter(prefix="/relatives", tags=["Relatives"])
@@ -33,6 +33,12 @@ def get_relative_documents(relative_id: int,
 
     return service.get_relative_documents(relative_id)
 
+
+@relative_router.patch("/{relative_id}", response_model=RelativeOut)
+def update_relative(relative_id: int, patch: RelativeUpdate,
+                    service: RelativeService=Depends()):
+
+    return service.update_relative_by_id(relative_id, patch)
 
 @relative_router.delete("/{relative_id}", response_model=None, status_code=status.HTTP_204_NO_CONTENT)
 def delete_relative(relative_id: int, service: RelativeService=Depends()):

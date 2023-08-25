@@ -12,8 +12,7 @@ from src.dal.relatives import RelativeDal
 from src.db.models.tables import Patient, Relative, Document, Relationship
 from src.schemas.document import DocumentIn, DocumentUpdate
 from src.schemas.patient import PatientIn, PatientUpdate, PatientOutWithRelType
-from src.schemas.relative import RelativeIn, RelativeOut
-
+from src.schemas.relative import RelativeIn, RelativeOut, RelativeUpdate
 
 
 class PatientService:
@@ -86,6 +85,9 @@ class RelativeService:
     def get_relative_documents(self, relative_id: int) -> list[Document]:
         documents = self.dal.get_relative_documents(relative_id)
         return documents
+
+    def update_relative_by_id(self, relative_id: int, data: RelativeUpdate) -> Relative:
+        return self.dal.update_relative_by_id(relative_id, data)
 
     def delete_relative_by_id(self, relative_id: int) -> status.HTTP_204_NO_CONTENT:
         self.dal.delete_by_id(relative_id)
