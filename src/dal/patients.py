@@ -9,6 +9,7 @@ from src.schemas.relative import RelativeIn
 from src.utils.errors import ItemNotFoundError
 
 
+
 class PatientDal(Dal[Patient]):
     model = Patient
 

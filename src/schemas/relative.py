@@ -1,5 +1,7 @@
 from datetime import date
-from src.schemas.base import IdModel, ApiModel, RelationshipType, Gender
+from src.schemas.base import IdModel, ApiModel, RelationshipType, Gender, Validators
+from pydantic import validator, Field
+
 
 class RelativeId(IdModel):
     pass
@@ -13,10 +15,19 @@ class RelativeBase(ApiModel):
     snils: str
 
 
-
-
 class RelativeIn(RelativeBase):
     relationship_type: RelationshipType
+
+    _name_validator = validator(
+        'last_name',
+        'first_name',
+        'middle_name',
+        allow_reuse=True)(Validators.validate_names)
+
+    _birthday_validator = validator(
+        'birthday',
+        pre=True,
+        allow_reuse=True)(Validators.validate_date)
 
 class RelativeOut(RelativeBase, RelativeId):
     relationship_type: RelationshipType | None = None
@@ -29,4 +40,15 @@ class RelativeUpdate(ApiModel):
     gender: Gender | None = None
     snils: str | None = None
     relationship_type: RelationshipType | None = None
+
+    _name_validator = validator(
+        'last_name',
+        'first_name',
+        'middle_name',
+        allow_reuse=True)(Validators.validate_names)
+
+    _birthday_validator = validator(
+        'birthday',
+        pre=True,
+        allow_reuse=True)(Validators.validate_date)
 

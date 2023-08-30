@@ -1,8 +1,8 @@
 from datetime import date
 
-from src.schemas.base import ApiModel, IdModel, Gender
+from src.schemas.base import ApiModel, IdModel, Gender, Validators
 from src.schemas.relative import RelationshipType
-
+from pydantic import validator
 
 class PatientId(IdModel):
     pass
@@ -16,9 +16,18 @@ class PatientBase(ApiModel):
     snils: str
 
 
-
 class PatientIn(PatientBase):
-    pass
+
+    _name_validator = validator(
+        'last_name',
+        'first_name',
+        'middle_name',
+        allow_reuse=True)(Validators.validate_names)
+
+    _birthday_validator = validator(
+        'birthday',
+        pre=True,
+        allow_reuse=True)(Validators.validate_date)
 
 class PatientOut(PatientBase, PatientId):
     pass
@@ -33,3 +42,15 @@ class PatientUpdate(ApiModel):
     birthday: date | None = None
     gender: Gender | None = None
     snils: str | None = None
+
+
+    _name_validator = validator(
+        'last_name',
+        'first_name',
+        'middle_name',
+        allow_reuse=True)(Validators.validate_names)
+
+    _birthday_validator = validator(
+        'birthday',
+        pre=True,
+        allow_reuse=True)(Validators.validate_date)

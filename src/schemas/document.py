@@ -1,36 +1,56 @@
 from datetime import date
+from pydantic import validator
 
-from strenum import StrEnum
+from src.schemas.base import ApiModel, IdModel, DocType, Validators
 
-from src.schemas.base import ApiModel, IdModel
-
-
-class DocType(StrEnum):
-    passport = 'passport'
-    birth_cert_new  = 'birth_cert'
-    birth_cert_old = 'birth_cert_old'
 
 class DocumentId(IdModel):
     pass
 
 
 class DocumentBase(ApiModel):
+    document_type: DocType
     series: str
     number: str
-    document_type: DocType
     issue_date: date
     issuing_authority: str
 
 
 class DocumentIn(DocumentBase):
-    pass
+
+    _date_validator = validator(
+        'issue_date',
+        pre=True,
+        allow_reuse=True)(Validators.validate_date)
+
+    _series_validator = validator(
+        'series',
+        allow_reuse=True)(Validators.validate_document_series)
+
+    _number_validator = validator(
+        'number',
+        allow_reuse=True)(Validators.validate_document_number)
+
 
 class DocumentOut(DocumentBase, DocumentId):
     pass
 
 class DocumentUpdate(ApiModel):
+    document_type: DocType | None = None
     series: str | None = None
     number: str | None = None
-    document_type: DocType | None = None
     issue_date: date | None = None
     issuing_authority: str | None = None
+
+    _date_validator = validator(
+        'issue_date',
+        pre=True,
+        allow_reuse=True)(Validators.validate_date)
+
+    _series_validator = validator(
+        'series',
+        allow_reuse=True)(Validators.validate_document_series)
+
+    _number_validator = validator(
+        'number',
+        allow_reuse=True)(Validators.validate_document_number)

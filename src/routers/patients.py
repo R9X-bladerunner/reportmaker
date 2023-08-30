@@ -25,7 +25,7 @@ def create_patient(
         ):
     return service.create_patient(patient)
 
-@patient_router.patch("", response_model=Union[PatientOut, None])
+@patient_router.patch("/{patient_id}", response_model=Union[PatientOut, None])
 def update_patient(
         patient_id: int,
         data: PatientUpdate,
