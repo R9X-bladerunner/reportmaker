@@ -26,7 +26,6 @@ class PatientIn(PatientBase):
 
     _birthday_validator = validator(
         'birthday',
-        pre=True,
         allow_reuse=True)(Validators.validate_date)
 
 class PatientOut(PatientBase, PatientId):
@@ -52,5 +51,4 @@ class PatientUpdate(ApiModel):
 
     _birthday_validator = validator(
         'birthday',
-        pre=True,
         allow_reuse=True)(Validators.validate_date)

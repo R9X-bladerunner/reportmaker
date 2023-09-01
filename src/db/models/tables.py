@@ -63,7 +63,7 @@ class Relative(Base):
     gender = Column(Enum(Gender))
     snils = Column(String(11))
 
-    relative_association = relationship("Relationship")
+    relative_association = relationship("Relationship", overlaps="patient,patients,relatives")
 
     documents = relationship("Document", backref="relative")
 

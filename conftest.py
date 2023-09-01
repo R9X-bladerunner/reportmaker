@@ -5,7 +5,7 @@ from contextlib import suppress, contextmanager
 # https://stackoverflow.com/questions/54895002/modulenotfounderror-with-pytest
 from sqlalchemy.orm import Session, sessionmaker
 
-sys.path.append(".")
+sys.path.append("src/tests")
 from typing import Iterator
 
 import pytest

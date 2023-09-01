@@ -26,7 +26,6 @@ class RelativeIn(RelativeBase):
 
     _birthday_validator = validator(
         'birthday',
-        pre=True,
         allow_reuse=True)(Validators.validate_date)
 
 class RelativeOut(RelativeBase, RelativeId):
@@ -49,6 +48,5 @@ class RelativeUpdate(ApiModel):
 
     _birthday_validator = validator(
         'birthday',
-        pre=True,
         allow_reuse=True)(Validators.validate_date)
 

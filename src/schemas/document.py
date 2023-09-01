@@ -20,7 +20,6 @@ class DocumentIn(DocumentBase):
 
     _date_validator = validator(
         'issue_date',
-        pre=True,
         allow_reuse=True)(Validators.validate_date)
 
     _series_validator = validator(
@@ -44,7 +43,6 @@ class DocumentUpdate(ApiModel):
 
     _date_validator = validator(
         'issue_date',
-        pre=True,
         allow_reuse=True)(Validators.validate_date)
 
     _series_validator = validator(

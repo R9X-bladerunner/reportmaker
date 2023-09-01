@@ -75,22 +75,15 @@ class Validators:
     def validate_names(v):
         pattern = r'^([А-Яа-яёЁ]([ \'-]?[А-Яа-яёЁ])*)$'
         if not match(pattern, v):
-            raise ValueError('incorrect format of the <first_name>/<last_name>/<middle_name> field value')
+            raise ValueError('incorrect format of field value')
         return v
 
 
 
     @staticmethod
     def validate_date(v):
-        try:
-            input_date = datetime.strptime(v, '%Y-%m-%d').date()
-        except TypeError:
-            raise ValueError("data type of the date field must be str")
-        except ValueError:
-            raise ValueError("date field must be in <YYYY-MM-DD> format")
-
         current_date = date.today()
-        if input_date > current_date:
+        if v > current_date:
             raise ValueError('<date must not be later than the current date>')
         return v
 
