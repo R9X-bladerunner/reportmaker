@@ -28,6 +28,20 @@ class PatientIn(PatientBase):
         'birthday',
         allow_reuse=True)(Validators.validate_date)
 
+    class Config:
+        schema_extra = {
+            "example":
+                {
+                    "last_name": "Иванов",
+                    "first_name": "Иван",
+                    "middle_name": "Петрович",
+                    "birthday": "2000-01-01",
+                    "gender": "male",
+                    "snils": "1234567890"
+                }
+
+        }
+
 class PatientOut(PatientBase, PatientId):
     pass
 
@@ -52,3 +66,17 @@ class PatientUpdate(ApiModel):
     _birthday_validator = validator(
         'birthday',
         allow_reuse=True)(Validators.validate_date)
+
+    class Config:
+        schema_extra = {
+            "example":
+                {
+                    "last_name": "Иванов",
+                    "first_name": "Иван",
+                    "middle_name": "Петрович",
+                    "birthday": "2000-01-01",
+                    "gender": "male",
+                    "snils": "1234567890"
+                }
+
+        }

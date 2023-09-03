@@ -28,6 +28,22 @@ class RelativeIn(RelativeBase):
         'birthday',
         allow_reuse=True)(Validators.validate_date)
 
+    class Config:
+        schema_extra = {
+            "example":
+                {
+                    "last_name": "Иванов",
+                    "first_name": "Петр",
+                    "middle_name": "Алексеевич",
+                    "birthday": "1975-01-01",
+                    "gender": "male",
+                    "snils": "1234567890",
+                    "relationship_type": "father"
+                }
+
+        }
+
+
 class RelativeOut(RelativeBase, RelativeId):
     relationship_type: RelationshipType | None = None
 
@@ -50,3 +66,17 @@ class RelativeUpdate(ApiModel):
         'birthday',
         allow_reuse=True)(Validators.validate_date)
 
+    class Config:
+        schema_extra = {
+            "example":
+                {
+                    "last_name": "Иванов",
+                    "first_name": "Петр",
+                    "middle_name": "Алексеевич",
+                    "birthday": "1975-01-01",
+                    "gender": "male",
+                    "snils": "1234567890",
+                    "relationship_type": "father"
+                }
+
+        }

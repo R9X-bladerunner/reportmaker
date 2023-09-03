@@ -1,6 +1,6 @@
 from typing import Union
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 
 from src.schemas.document import DocumentOut, DocumentIn
 from src.schemas.patient import PatientIn, PatientOut, PatientUpdate
@@ -18,7 +18,7 @@ def get_patients(service: PatientService = Depends()):
 def get_patient(patient_id: int, service: PatientService = Depends()):
     return service.get_patient_by_id(patient_id)
 
-@patient_router.post("", response_model=PatientOut)
+@patient_router.post("", response_model=PatientOut, status_code=status.HTTP_201_CREATED)
 def create_patient(
         patient: PatientIn,
         service: PatientService = Depends(),
@@ -37,7 +37,9 @@ def update_patient(
 def delete_patient(patient_id: int, service: PatientService=Depends()):
     return service.delete_patient(patient_id)
 
-@patient_router.post("/{patient_id}/relatives", response_model=RelativeOut)
+@patient_router.post("/{patient_id}/relatives",
+                     response_model=RelativeOut,
+                     status_code=status.HTTP_201_CREATED)
 def create_relative(patient_id:int,
                     relative_data: RelativeIn,
                     service: PatientService=Depends()):
@@ -49,7 +51,9 @@ def get_patient_relatives(patient_id: int,
 
     return service.get_patient_relatives(patient_id)
 
-@patient_router.post("/{patient_id}/documents", response_model=DocumentOut)
+@patient_router.post("/{patient_id}/documents",
+                     response_model=DocumentOut,
+                     status_code=status.HTTP_201_CREATED)
 def create_patient_document(patient_id:int,
                     document_data: DocumentIn,
                     service: PatientService=Depends()):

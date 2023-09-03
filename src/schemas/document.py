@@ -29,7 +29,18 @@ class DocumentIn(DocumentBase):
     _number_validator = validator(
         'number',
         allow_reuse=True)(Validators.validate_document_number)
+    class Config:
+        schema_extra = {
+            "example":
+                {
+                    "document_type": "passport",
+                    "series": "1234",
+                    "number": "123456",
+                    "issue_date": "2023-09-01",
+                    "issuing_authority": "MVD of RB"
+                }
 
+        }
 
 class DocumentOut(DocumentBase, DocumentId):
     pass
@@ -52,3 +63,16 @@ class DocumentUpdate(ApiModel):
     _number_validator = validator(
         'number',
         allow_reuse=True)(Validators.validate_document_number)
+
+    class Config:
+        schema_extra = {
+            "example":
+                {
+                    "document_type": "passport",
+                    "series": "1234",
+                    "number": "123456",
+                    "issue_date": "2023-09-01",
+                    "issuing_authority": "MVD of RB"
+                }
+
+        }

@@ -4,7 +4,7 @@ from sqlalchemy.orm import joinedload
 from src.dal.dal import Dal
 from src.db.models.tables import Relative, Relationship, Document
 from src.schemas.document import DocumentIn
-from src.schemas.relative import RelativeUpdate, RelativeOut
+from src.schemas.relative import RelativeUpdate
 from src.utils.errors import ItemNotFoundError
 
 
