@@ -54,7 +54,6 @@ class RelativeUpdate(ApiModel):
     birthday: date | None = None
     gender: Gender | None = None
     snils: str | None = None
-    relationship_type: RelationshipType | None = None
 
     _name_validator = validator(
         'last_name',
@@ -75,8 +74,7 @@ class RelativeUpdate(ApiModel):
                     "middle_name": "Алексеевич",
                     "birthday": "1975-01-01",
                     "gender": "male",
-                    "snils": "1234567890",
-                    "relationship_type": "father"
+                    "snils": "1234567890"
                 }
 
         }

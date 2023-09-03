@@ -42,7 +42,7 @@ class RelativeDal(Dal[Relative]):
 
     def update_relative_by_id(self, relative_id: int, data: RelativeUpdate) -> Relative:
         filters = {'id': relative_id}
-        patch = data.dict(exclude_unset=True, exclude={'relationship_type'})
+        patch = data.dict(exclude_unset=True)
         updated_relative = self.update(filters, patch)
         if updated_relative is None:
             raise ItemNotFoundError

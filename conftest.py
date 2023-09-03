@@ -19,7 +19,7 @@ from src.db.connection import get_session
 
 pytest_plugins = [
     "data.patients",
-
+    "data.relatives"
 ]
 
 engine = create_engine(

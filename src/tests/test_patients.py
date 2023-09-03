@@ -33,7 +33,7 @@ async def test_get_patient(
 async def test_delete_patient(
     client: TestClient, patient: Patient
 ):
-    ok = client.get("/api/v1/patients/")
+    ok = client.delete(f"/api/v1/patients/{patient.id}")
     assert ok.status_code == 200, ok.text
 
 
@@ -81,7 +81,7 @@ async def test_get_patient_documents(
     assert ok.status_code == 200, ok.text
 
 async def test_create_patient_document(
-        client: TestClient, patient: Patient
+    client: TestClient, patient: Patient
 ):
     ok = client.post(f"/api/v1/patients/{patient.id}/documents",
                      json=get_document_data())

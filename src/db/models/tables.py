@@ -50,7 +50,7 @@ class Patient(Base):
     )
     relative_association = relationship("Relationship", overlaps="patient")
 
-    documents = relationship("Document", backref="patient")
+    documents = relationship("Document", back_populates="patient")
 
 
 class Relative(Base):
@@ -71,7 +71,7 @@ class Relative(Base):
         back_populates="relatives",
         viewonly=True
     )
-    documents = relationship("Document", backref="relative")
+    documents = relationship("Document", back_populates="relative")
 
 class Document(Base):
     __tablename__ = "documents"
@@ -84,6 +84,9 @@ class Document(Base):
     issuing_authority = Column(String, nullable=False)
     patient_id = Column(Integer, ForeignKey("patients.id", ondelete="CASCADE"), nullable=True)
     relative_id = Column(Integer, ForeignKey("relatives.id", ondelete="CASCADE"), nullable=True)
+
+    patient = relationship("Patient", back_populates="documents")
+    relative = relationship("Relative", back_populates="documents")
 
     __table_args__ = (
             CheckConstraint(
