@@ -87,4 +87,9 @@ async def test_create_patient_document(
                      json=get_document_data())
     assert ok.status_code == 201, ok.text
 
-
+async def get_report(
+    client: TestClient, patient: Patient
+):
+    ok = client.get(f"/api/v1/reports/patients/{patient.id}")
+    assert ok.status_code == 200, ok.text
+    assert ok.headers["content-type"] == "application/pdf"
