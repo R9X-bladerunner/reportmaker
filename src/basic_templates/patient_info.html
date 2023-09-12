@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            font-weight: bold;
+        }
+    </style>
+    <title>patient</title>
+</head>
+<body>
+    <h1>Информация о пациенте</h1>
+
+    <table>
+        <tr>
+            <th>Индивидуальный номер карты пациента (ID):</th>
+            <td>{{ id }}</td>
+        </tr>
+        <tr>
+            <th>Фамилия:</th>
+            <td>{{ last_name }}</td>
+        </tr>
+        <tr>
+            <th>Имя:</th>
+            <td>{{ first_name }}</td>
+        </tr>
+        <tr>
+            <th>Отчество:</th>
+            <td>{{ middle_name }}</td>
+        </tr>
+        <tr>
+            <th>Дата рождения:</th>
+            <td>{{ birthday }}</td>
+        </tr>
+        <tr>
+            <th>Пол:</th>
+            <td>{{ gender }}</td>
+        </tr>
+        <tr>
+            <th>СНИЛС:</th>
+            <td>{{ snils }}</td>
+        </tr>
+    </table>
+</body>
+</html>

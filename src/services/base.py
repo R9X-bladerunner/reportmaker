@@ -1,39 +1,53 @@
-from typing import TypeVar, Generic, Mapping, Any
+from typing import Generic, TypeVar, List, Optional
+from src.dal.base import AbstractRepository
 
-from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from src.db.connection import get_session
-from src.repositories.base import Repository
-from src.schemas.base import Pagination, PId, MdId
-from src.utils.custom_types import TModel
-
-TRepository = TypeVar("TRepository", bound=Repository)
+_T = TypeVar("_T")
 
 
-class BaseService(Generic[TRepository, TModel]):
-    repo_type: type[TRepository]
-    repo: TRepository
+class AbstractService(Generic[_T]):
+    repository: type(AbstractRepository[_T])
 
-    def __init__(self, sess: AsyncSession = Depends(get_session)) -> None:
-        self.sess = sess
-        self.repo = self.repo_type(self.sess)
+    def __init__(self, repository: AbstractRepository[_T]):
+        self.repository = repository
 
-    async def base_fetch_all(
-        self, pagination: Pagination | None = None
-    ) -> list[TModel]:
-        return await self.repo.fetch_all(pagination=pagination)
+    def get_by_id(self, obj_id) -> Optional[_T]:
+        return self.repository.get_by_id(obj_id)
 
-    async def base_create(self, data: Mapping[str, Any]) -> TModel:
-        return await self.repo.insert(data)
+    def get_all(self) -> List[_T]:
+        return self.repository.get_all()
 
-    async def base_update(
-        self, filters: Mapping[str, Any], data: Mapping[str, Any]
-    ) -> TModel | None:
-        return await self.repo.update(filters, data)
+    def create(self, obj: _T) -> _T:
+        return self.repository.create(obj)
 
-    async def base_delete(self, filters: Mapping[str, Any]) -> None:
-        return await self.repo.delete(filters)
+    def update(self, obj: _T) -> _T:
+        return self.repository.update(obj)
 
-    async def base_fetch_one(self, id_: int | PId | MdId) -> TModel | None:
-        return await self.repo.get_(id_)
+    def delete(self, obj: _T) -> None:
+        self.repository.delete(obj)
+
+    def get_count(self) -> int:
+        return self.repository.get_count()
+
+    def create_bulk(self, objs: List[_T]) -> List[_T]:
+        return self.repository.create_bulk(objs)
+
+    def update_bulk(self, objs: List[_T]) -> List[_T]:
+        return self.repository.update_bulk(objs)
+
+    def delete_by_id(self, obj_id) -> None:
+        self.repository.delete_by_id(obj_id)
+
+    def filter_by(self, **kwargs) -> List[_T]:
+        return self.repository.filter_by(**kwargs)
+
+    def filter_first(self, **kwargs) -> Optional[_T]:
+        return self.repository.filter_first(**kwargs)
+
+    def filter_count(self, **kwargs) -> int:
+        return self.repository.filter_count(**kwargs)
+
+    def execute(self, stmt) -> None:
+        return self.repository.execute(stmt)
+
+    def raw_sql(self, stmt) -> None:
+        return self.repository.raw_sql(stmt)
