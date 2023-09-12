@@ -4,14 +4,11 @@ from contextlib import suppress
 import sqlalchemy as sa
 from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.engine import Engine
 
 from src.core.config import settings
 
 thread_local = local()
-
-Base = declarative_base()
 
 
 def get_engine() -> Engine:

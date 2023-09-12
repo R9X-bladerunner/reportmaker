@@ -22,7 +22,10 @@ def get_relative_patients(relative_id: int, service: RelativeService = Depends()
     return service.get_relative_patients(relative_id)
 
 
-@relative_router.post("/{relative_id}/documents", response_model=DocumentOut)
+@relative_router.post("/{relative_id}/documents",
+                      response_model=DocumentOut,
+                      status_code=status.HTTP_201_CREATED
+                      )
 def create_relative_document(relative_id:int,
                     document_data: DocumentIn,
                     service: RelativeService=Depends()):
@@ -34,7 +37,10 @@ def get_relative_documents(relative_id: int,
     return service.get_relative_documents(relative_id)
 
 
-@relative_router.patch("/{relative_id}", response_model=RelativeOut)
+@relative_router.patch("/{relative_id}",
+                       response_model=RelativeOut,
+                       response_model_exclude_unset=True,
+                       status_code=status.HTTP_200_OK)
 def update_relative(relative_id: int, patch: RelativeUpdate,
                     service: RelativeService=Depends()):
 

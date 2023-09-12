@@ -10,7 +10,7 @@ report_router = APIRouter(prefix="/reports", tags=["Reports"])
 
 
 
-@report_router.get("/reports/patients/{patient_id}")
+@report_router.get("/patients/{patient_id}")
 def get_patient_report(patient_id: int,
                 background_task: BackgroundTasks,
                 service: ReportService = Depends()) -> FileResponse:

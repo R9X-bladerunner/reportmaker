@@ -45,11 +45,12 @@ class Patient(Base):
     relatives = relationship(
         "Relative",
         secondary='relationships',
-        backref="patients"
+        back_populates="patients",
+        viewonly=True
     )
-    relative_association = relationship("Relationship")
+    relative_association = relationship("Relationship", overlaps="patient")
 
-    documents = relationship("Document", backref="patient")
+    documents = relationship("Document", back_populates="patient")
 
 
 class Relative(Base):
@@ -63,9 +64,14 @@ class Relative(Base):
     gender = Column(Enum(Gender))
     snils = Column(String(11))
 
-    relative_association = relationship("Relationship")
-
-    documents = relationship("Document", backref="relative")
+    relative_association = relationship("Relationship", overlaps="relative")
+    patients = relationship(
+        "Patient",
+        secondary='relationships',
+        back_populates="relatives",
+        viewonly=True
+    )
+    documents = relationship("Document", back_populates="relative")
 
 class Document(Base):
     __tablename__ = "documents"
@@ -78,6 +84,10 @@ class Document(Base):
     issuing_authority = Column(String, nullable=False)
     patient_id = Column(Integer, ForeignKey("patients.id", ondelete="CASCADE"), nullable=True)
     relative_id = Column(Integer, ForeignKey("relatives.id", ondelete="CASCADE"), nullable=True)
+
+    patient = relationship("Patient", back_populates="documents")
+    relative = relationship("Relative", back_populates="documents")
+
     __table_args__ = (
             CheckConstraint(
                 "(patient_id IS NOT NULL AND relative_id IS NULL) OR (patient_id IS NULL AND relative_id IS NOT NULL) OR (patient_id IS NOT NULL AND relative_id IS NOT NULL)",

@@ -1,6 +1,6 @@
 from typing import Union
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 
 from src.schemas.document import DocumentOut, DocumentUpdate
 from src.schemas.patient import PatientOut
