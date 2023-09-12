@@ -1,6 +1,5 @@
 from functools import lru_cache
 
-import cryptocode
 from pydantic import BaseSettings, validator, PostgresDsn
 
 
@@ -26,7 +25,7 @@ class Settings(BaseSettings):
     @validator("db_url", pre=True)
     def assemble_db_url(cls, v, values):
         return PostgresDsn.build(
-            scheme="postgresql+asyncpg",
+            scheme="postgresql+psycopg2",
             host=values.get("db_host"),
             port=values.get("db_port"),
             user=values.get("db_user"),
@@ -36,6 +35,25 @@ class Settings(BaseSettings):
     @validator("db_dsn", pre=True)
     def assemble_db_dsn(cls, v, values):
         return values.get("db_url") + "/" + values.get("db_name")
+
+    # Tests config
+    test_db_name: str
+    test_db_url: str = None
+    test_db_dsn: str = None
+
+    @validator("test_db_url", pre=True)
+    def assemble_test_db_url(cls, v, values):
+        return PostgresDsn.build(
+            scheme="postgresql+psycopg2",
+            host=values.get("db_host"),
+            port=values.get("db_port"),
+            user=values.get("db_user"),
+            password=values.get("db_password"),
+        )
+
+    @validator("test_db_dsn", pre=True)
+    def assemble_test_db_dsn(cls, v, values):
+        return values.get("test_db_url") + "/" + values.get("test_db_name")
 
     class Config:
         env_file = ".env"

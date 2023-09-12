@@ -1,9 +1,10 @@
-import re
-from datetime import datetime
+from datetime import datetime, date
 from typing import NamedTuple
 
 from fastapi import Query
 from pydantic import BaseModel, errors
+from strenum import StrEnum
+from re import match
 
 
 class naive_datetime(datetime):
@@ -49,113 +50,69 @@ class Pagination(NamedTuple):
     page_number: int = Query(1, gt=0)
 
 
-class PId(str):
-    """
-    Field for 'p1' format
-    """
+class IdModel(ApiModel):
+    id: int
 
-    md_regex = re.compile(r"^p[0-9]+$")  # P1 format
+class Gender(StrEnum):
+    male = 'male'
+    female = 'female'
 
-    @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
+class RelationshipType(StrEnum):
+    father = 'father'
+    mother = 'mother'
+    grandfather = 'grandfather'
+    grandmother = 'grandmother'
+    guardian = 'guardian'
 
-    @classmethod
-    def __modify_schema__(cls, field_schema):
-        field_schema.update(
-            pattern=r"^p[0-9]+$",
-            examples=["p1", "p131"],
-        )
+class DocType(StrEnum):
+    passport = 'passport'
+    birth_cert_new  = 'birth_cert'
+    birth_cert_old = 'birth_cert_old'
 
-    @classmethod
-    def validate(cls, v):
-        if not isinstance(v, str):
-            raise TypeError("string required")
-        m = cls.md_regex.fullmatch(v)
-        if not m:
-            raise ValueError("invalid PId format")
+class Validators:
+
+    @staticmethod
+    def validate_names(v):
+        pattern = r'^([А-Яа-яёЁ]([ \'-]?[А-Яа-яёЁ])*)$'
+        if not match(pattern, v):
+            raise ValueError('incorrect format of field value')
         return v
 
 
-class MdId(str):
-    """
-    Field for 'MD00001' format
-    """
 
-    md_regex = re.compile(r"^md\d{5}$")  # MD00005 format
-
-    @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
-
-    @classmethod
-    def __modify_schema__(cls, field_schema):
-        field_schema.update(
-            pattern=r"^md\d{5}$",
-            examples=["md00001", "md00002"],
-        )
-
-    @classmethod
-    def validate(cls, v):
-        if not isinstance(v, str):
-            raise TypeError("string required")
-        m = cls.md_regex.fullmatch(v)
-        if not m:
-            raise ValueError("invalid MdId format")
+    @staticmethod
+    def validate_date(v):
+        current_date = date.today()
+        if v > current_date:
+            raise ValueError('<date must not be later than the current date>')
         return v
 
 
-class LgId(str):
-    """
-    Field for 'lg1' format
-    """
+    @staticmethod
+    def validate_document_series(v, values):
+        print(values)
+        if 'document_type' not in values:
+            raise ValueError('<series> field requires filling in the <document_type> field')
 
-    md_regex = re.compile(r"^lg[0-9]+$")  # lg1 format
+        if values['document_type'] is None:
+            raise ValueError('<series> field requires the correct value to be filled in the <document_type> field')
 
-    @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
+        if values['document_type'] == DocType.passport:
+            pattern = r'^\d{4}$'
+            if not match(pattern, v):
+                raise ValueError('incorrect format of the <series> field value')
 
-    @classmethod
-    def __modify_schema__(cls, field_schema):
-        field_schema.update(
-            pattern=r"^lg[0-9]+$",
-            examples=["lg1", "lg131"],
-        )
+        if values['document_type'] in (DocType.birth_cert_new, DocType.birth_cert_old):
+            pattern = r'[IVXLC1УХЛС]{1,4}-[А-Я]{2}'
+            if not match(pattern, v):
+                raise ValueError('incorrect format of the <series> field value')
 
-    @classmethod
-    def validate(cls, v):
-        if not isinstance(v, str):
-            raise TypeError("string required")
-        m = cls.md_regex.fullmatch(v)
-        if not m:
-            raise ValueError("invalid LgId format")
         return v
 
-
-class TId(str):
-    """
-    Field for 't1' format
-    """
-
-    md_regex = re.compile(r"^t[0-9]+$")  # t1 format
-
-    @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
-
-    @classmethod
-    def __modify_schema__(cls, field_schema):
-        field_schema.update(
-            pattern=r"^t[0-9]+$",
-            examples=["t1", "t131"],
-        )
-
-    @classmethod
-    def validate(cls, v):
-        if not isinstance(v, str):
-            raise TypeError("string required")
-        m = cls.md_regex.fullmatch(v)
-        if not m:
-            raise ValueError("invalid TId format")
+    @staticmethod
+    def validate_document_number(v):
+        pattern = r'^\d{6}$'
+        if not match(pattern, v):
+            raise ValueError('incorrect format of the <number> field value')
         return v
+

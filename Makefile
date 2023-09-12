@@ -1,5 +1,4 @@
 api_container_name = reportmaker.api
-api_migration_image_name =  bair-template-api_migrations
 
 build:
 	docker-compose build
@@ -33,12 +32,6 @@ attach:
 
 drop_volumes:
 	docker-compose down -v
-
-revision:
-	docker exec -it $(api_container_name) alembic revision --autogenerate -m ""
-
-upgrade_head:
-	docker exec -it $(api_container_name) alembic upgrade head
 
 test:
 	docker exec $(api_container_name) pytest
